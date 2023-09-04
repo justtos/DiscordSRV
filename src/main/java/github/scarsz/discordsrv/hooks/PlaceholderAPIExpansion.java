@@ -21,6 +21,7 @@
 package github.scarsz.discordsrv.hooks;
 
 import github.scarsz.discordsrv.DiscordSRV;
+import github.scarsz.discordsrv.objects.DatabaseUser;
 import github.scarsz.discordsrv.objects.managers.AccountLinkManager;
 import github.scarsz.discordsrv.objects.managers.link.JdbcAccountLinkManager;
 import github.scarsz.discordsrv.util.DiscordUtil;
@@ -37,7 +38,9 @@ import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.xml.crypto.Data;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -61,7 +64,7 @@ public class PlaceholderAPIExpansion extends PlaceholderExpansion {
                 .collect(Collectors.toSet());
         Set<String> onlineMemberIds = onlineMembers.stream().map(Member::getId).collect(Collectors.toSet());
         AccountLinkManager accountLinkManager = DiscordSRV.getPlugin().getAccountLinkManager();
-        Supplier<Set<String>> linkedAccounts = () -> {
+        Supplier<Set<DatabaseUser>> linkedAccounts = () -> {
             if (accountLinkManager instanceof JdbcAccountLinkManager && Bukkit.isPrimaryThread()) {
                 // not permitted
                 long currentTime = System.currentTimeMillis();

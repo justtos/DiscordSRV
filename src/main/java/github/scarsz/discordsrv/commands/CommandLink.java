@@ -118,6 +118,7 @@ public class CommandLink {
                 .filter(entry -> entry.getValue().equals(player.getUniqueId()))
                 .forEach(match -> manager.getLinkingCodes().remove(match.getKey()));
 
+
         if (manager.getDiscordId(player.getUniqueId()) != null) {
             MessageUtil.sendMessage(sender, LangUtil.Message.ACCOUNT_ALREADY_LINKED.toString());
         } else {

@@ -386,6 +386,7 @@ public class DiscordChatListener extends ListenerAdapter {
 
         return input.replace("%channelname%", event.getChannel().getName())
                 .replace("%name%", escape.apply(MessageUtil.strip(event.getMember() != null ? event.getMember().getEffectiveName() : event.getAuthor().getName())))
+                //.replace("%displayname%", escape.apply(MessageUtil.strip(event.getAuthor())))
                 .replace("%username%", escape.apply(MessageUtil.strip(event.getAuthor().getName())))
                 .replace("%toprole%", escape.apply(DiscordUtil.getRoleName(!selectedRoles.isEmpty() ? selectedRoles.get(0) : null)))
                 .replace("%toproleinitial%", !selectedRoles.isEmpty() ? escape.apply(DiscordUtil.getRoleName(selectedRoles.get(0)).substring(0, 1)) : "")

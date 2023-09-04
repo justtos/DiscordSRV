@@ -20,6 +20,8 @@
 
 package github.scarsz.discordsrv.objects.managers;
 
+import github.scarsz.discordsrv.objects.DatabaseUser;
+import github.scarsz.discordsrv.objects.MetaData;
 import org.bukkit.event.Listener;
 
 import java.util.Map;
@@ -36,8 +38,8 @@ public abstract class AccountLinkManager implements Listener {
      *
      * @param uuid the player's UUID
      * @return the player's linked account's Discord user id or {@code null}.
-     * @see net.dv8tion.jda.api.JDA#getUserById(String)
      * @throws IllegalStateException if this is requested on Bukkit's main thread for a player that isn't online when DiscordSRV is using a non-memory storage backend (in the future)
+     * @see net.dv8tion.jda.api.JDA#getUserById(String)
      * @see #isInCache(UUID)
      */
     public abstract String getDiscordId(UUID uuid);
@@ -83,13 +85,13 @@ public abstract class AccountLinkManager implements Listener {
      * Gets all linked accounts.
      *
      * @return all linked accounts in a Discord ID-UUID map.
+     * @throws IllegalStateException if this is requested on Bukkit's main thread when DiscordSRV is using a non-memory storage backend (in the future)
      * @see #getUuid(String)
      * @see #getDiscordId(UUID)
      * @see #getManyUuids(Set)
      * @see #getManyDiscordIds(Set)
-     * @throws IllegalStateException if this is requested on Bukkit's main thread when DiscordSRV is using a non-memory storage backend (in the future)
      */
-    public abstract Map<String, UUID> getLinkedAccounts();
+    public abstract Map<DatabaseUser, UUID> getLinkedAccounts();
 
     /**
      * Gets the Discord ID for the given player from the cache
@@ -152,4 +154,11 @@ public abstract class AccountLinkManager implements Listener {
 
     public abstract void save();
 
+    public abstract MetaData getMetaDataByUUIDBypassCache(UUID uuid);
+
+    public abstract MetaData getMetaDataByUUID(UUID uuid);
+
+    public abstract boolean saveMetaData(UUID uuid);
+
+    public abstract void updateChackedMetaData(UUID uuid, MetaData newMetaData);
 }

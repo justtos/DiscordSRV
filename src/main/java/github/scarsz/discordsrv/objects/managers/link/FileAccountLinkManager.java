@@ -25,6 +25,8 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.stream.MalformedJsonException;
 import github.scarsz.discordsrv.Debug;
 import github.scarsz.discordsrv.DiscordSRV;
+import github.scarsz.discordsrv.objects.DatabaseUser;
+import github.scarsz.discordsrv.objects.MetaData;
 import github.scarsz.discordsrv.util.DiscordUtil;
 import github.scarsz.discordsrv.util.LangUtil;
 import github.scarsz.discordsrv.util.MessageUtil;
@@ -45,7 +47,7 @@ import java.util.UUID;
 
 public class FileAccountLinkManager extends AbstractAccountLinkManager {
 
-    private final DualHashBidiMap<String, UUID> linkedAccounts = new DualHashBidiMap<>();
+    private final DualHashBidiMap<DatabaseUser, UUID> linkedAccounts = new DualHashBidiMap<>();
 
     @SuppressWarnings("ConstantConditions") // MalformedJsonException is a checked exception
     public FileAccountLinkManager() {
@@ -71,16 +73,17 @@ public class FileAccountLinkManager extends AbstractAccountLinkManager {
             jsonObject.entrySet().forEach(entry -> {
                 String key = entry.getKey();
                 String value = entry.getValue().getAsString();
+                DatabaseUser databaseUser = new DatabaseUser(UUID.fromString(value), key, getMetaDataByUUID(UUID.fromString(value)));
                 if (key.isEmpty() || value.isEmpty()) {
                     // empty values are not allowed.
                     return;
                 }
 
                 try {
-                    linkedAccounts.put(key, UUID.fromString(value));
+                    linkedAccounts.put(databaseUser, UUID.fromString(value));
                 } catch (Exception e) {
                     try {
-                        linkedAccounts.put(value, UUID.fromString(key));
+                        linkedAccounts.put(databaseUser, UUID.fromString(key));
                     } catch (Exception f) {
                         DiscordSRV.warning("Failed to load linkedaccounts.json file. It's extremely recommended to delete your linkedaccounts.json file.");
                     }
@@ -104,7 +107,7 @@ public class FileAccountLinkManager extends AbstractAccountLinkManager {
     }
 
     @Override
-    public Map<String, UUID> getLinkedAccounts() {
+    public Map<DatabaseUser, UUID> getLinkedAccounts() {
         return linkedAccounts;
     }
 
@@ -182,7 +185,7 @@ public class FileAccountLinkManager extends AbstractAccountLinkManager {
     @Override
     public String getDiscordId(UUID uuid) {
         synchronized (linkedAccounts) {
-            return linkedAccounts.getKey(uuid);
+            return linkedAccounts.getKey(uuid).getDiscordId();
         }
     }
 
@@ -197,7 +200,7 @@ public class FileAccountLinkManager extends AbstractAccountLinkManager {
         for (UUID uuid : uuids) {
             String discordId;
             synchronized (linkedAccounts) {
-                discordId = linkedAccounts.getKey(uuid);
+                discordId = linkedAccounts.getKey(uuid).getDiscordId();
             }
             if (discordId != null) results.put(uuid, discordId);
         }
@@ -241,7 +244,7 @@ public class FileAccountLinkManager extends AbstractAccountLinkManager {
         unlink(uuid);
 
         synchronized (linkedAccounts) {
-            linkedAccounts.put(discordId, uuid);
+            linkedAccounts.put(new DatabaseUser(uuid, discordId, null), uuid);
         }
         afterLink(discordId, uuid);
     }
@@ -250,7 +253,7 @@ public class FileAccountLinkManager extends AbstractAccountLinkManager {
     public void unlink(UUID uuid) {
         String discordId;
         synchronized (linkedAccounts) {
-            discordId = linkedAccounts.getKey(uuid);
+            discordId = linkedAccounts.getKey(uuid).getDiscordId();
         }
         if (discordId == null) return;
 
@@ -284,7 +287,7 @@ public class FileAccountLinkManager extends AbstractAccountLinkManager {
         try {
             JsonObject map = new JsonObject();
             synchronized (linkedAccounts) {
-                linkedAccounts.forEach((discordId, uuid) -> map.addProperty(discordId, String.valueOf(uuid)));
+                linkedAccounts.forEach((databaseUser, uuid) -> map.addProperty(databaseUser.getDiscordId(), String.valueOf(uuid)));
             }
             FileUtils.writeStringToFile(DiscordSRV.getPlugin().getLinkedAccountsFile(), map.toString(), StandardCharsets.UTF_8);
         } catch (IOException e) {
@@ -297,4 +300,23 @@ public class FileAccountLinkManager extends AbstractAccountLinkManager {
         );
     }
 
+    @Override
+    public MetaData getMetaDataByUUIDBypassCache(UUID uuid) {
+        return null;
+    }
+
+    @Override
+    public boolean saveMetaData(UUID uuid) {
+        return false;
+    }
+
+    @Override
+    public void updateChackedMetaData(UUID uuid, MetaData newMetaData) {
+
+    }
+
+    @Override
+    public MetaData getMetaDataByUUID(UUID uuid) {
+        return null;
+    }
 }

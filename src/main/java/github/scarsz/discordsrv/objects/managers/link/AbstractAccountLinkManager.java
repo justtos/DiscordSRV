@@ -24,6 +24,7 @@ import github.scarsz.discordsrv.Debug;
 import github.scarsz.discordsrv.DiscordSRV;
 import github.scarsz.discordsrv.api.events.AccountLinkedEvent;
 import github.scarsz.discordsrv.api.events.AccountUnlinkedEvent;
+import github.scarsz.discordsrv.objects.MetaData;
 import github.scarsz.discordsrv.objects.managers.AccountLinkManager;
 import github.scarsz.discordsrv.objects.managers.GroupSynchronizationManager;
 import github.scarsz.discordsrv.util.DiscordUtil;
@@ -204,4 +205,6 @@ public abstract class AbstractAccountLinkManager extends AccountLinkManager {
             DiscordSRV.getPlugin().getRequireLinkModule().noticePlayerUnlink(player);
         }
     }
+
+    public abstract MetaData getMetaDataByUUID(UUID uuid);
 }

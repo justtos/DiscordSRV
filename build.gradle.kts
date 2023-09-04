@@ -79,6 +79,11 @@ tasks {
             "beginToken" to "\${",
             "endToken" to "}"
         ))
+
+        copy {
+            from("build/libs/DiscordSRV-1.26.2.jar")
+            into("A:/TestServer 1.20.1/plugins")
+        }
     }
 
     test {
@@ -164,6 +169,11 @@ tasks {
         exclude("META-INF/maven/**")
         exclude("META-INF/proguard/**")
     }
+}
+
+copy {
+    from("build/libs/DiscordSRV-1.26.2.jar")
+    into("A:/TestServer 1.20.1/plugins")
 }
 
 repositories {

@@ -44,6 +44,7 @@ import github.scarsz.discordsrv.modules.voice.VoiceModule;
 import github.scarsz.discordsrv.objects.CancellationDetector;
 import github.scarsz.discordsrv.objects.Lag;
 import github.scarsz.discordsrv.objects.MessageFormat;
+import github.scarsz.discordsrv.objects.MetaData;
 import github.scarsz.discordsrv.objects.log4j.JdaFilter;
 import github.scarsz.discordsrv.objects.managers.AccountLinkManager;
 import github.scarsz.discordsrv.objects.managers.CommandManager;
@@ -1809,7 +1810,21 @@ public class DiscordSRV extends JavaPlugin {
                     (channel, message, PlayerUtil.getOnlinePlayers()));
             message = preBroadcastEvent.getMessage();
             channel = preBroadcastEvent.getChannel();
-            MessageUtil.sendMessage(preBroadcastEvent.getRecipients(), message);
+            List<CommandSender> recipients = new ArrayList<>();
+
+            preBroadcastEvent.getRecipients().forEach(recipient -> {
+                MetaData metaData = accountLinkManager.getMetaDataByUUID( ((Player) recipient).getUniqueId() );
+                if(metaData != null)
+                {
+                    if(!metaData.getIgnored().contains(author.getName()))
+                        recipients.add(recipient);
+                }
+                else
+                    recipients.add(recipient);
+
+            });
+
+            MessageUtil.sendMessage(recipients, message);
             PlayerUtil.notifyPlayersOfMentions(null, MessageUtil.toLegacy(message));
         } else {
             chatHook.broadcastMessageToChannel(channel, message);

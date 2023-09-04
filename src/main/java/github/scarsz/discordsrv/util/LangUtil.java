@@ -734,8 +734,9 @@ public class LangUtil {
         SERVER_WATCHDOG("ServerWatchdogMessage", false),
         UNABLE_TO_LINK_ACCOUNTS_RIGHT_NOW("LinkingError", true),
         UNKNOWN_CODE("UnknownCode", false),
-        UNLINK_SUCCESS("UnlinkCommandSuccess", true);
-
+        UNLINK_SUCCESS("UnlinkCommandSuccess", true),
+        DISCORD_USER_IGNORE_LIST_ADDED("DiscordUserIgnoreListAdded", true),
+        DISCORD_USER_IGNORE_LIST_REMOVED("DiscordUserIgnoreListRemoved", true);
         @Getter private final String keyName;
         @Getter private final boolean translateColors;
 
