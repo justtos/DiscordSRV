@@ -335,7 +335,19 @@ public class DiscordSRV extends JavaPlugin {
     // log messages
     public static void logThrowable(Throwable throwable, Consumer<String> logger) {
         StringWriter stringWriter = new StringWriter();
-        throwable.printStackTrace(new PrintWriter(stringWriter));
+        // Don't log the whole stacktrace for duplicate entry
+        if(throwable.getMessage().contains("Duplicate entry")) {
+            stringWriter.append("Shorted stack-trace:" + throwable.getMessage());
+            for (StackTraceElement stackTraceElement : throwable.getStackTrace()) {
+                if(stackTraceElement.getFileName().startsWith("DiscordSRV-"))
+                {
+                    stringWriter.append(stackTraceElement.toString());
+                    break;
+                }
+            }
+        }
+        else
+            throwable.printStackTrace(new PrintWriter(stringWriter));
 
         for (String line : stringWriter.toString().split("\n")) logger.accept(line);
     }
