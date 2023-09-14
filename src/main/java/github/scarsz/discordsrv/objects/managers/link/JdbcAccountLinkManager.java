@@ -680,7 +680,6 @@ public class JdbcAccountLinkManager extends AbstractAccountLinkManager {
 
     public boolean saveMetaData(UUID uuid) {
         MetaData metaData = getMetaDataByUUID(uuid);
-        System.out.println(metaData);
 
         Gson gson = new Gson();
         try (final PreparedStatement statement = connection.prepareStatement("UPDATE " + accountsTable + " SET `metadata` = '" + gson.toJson(metaData) + " ' WHERE uuid like '%" + uuid + "%'")) {
